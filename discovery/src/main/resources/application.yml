@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: Eureka-Server
+server:
+  port: 8081
+
+eureka:
+  environment: DEV
+  datacenter: local
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: true
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka
+  server:
+    wait-time-in-ms-when-sync-empty: 0
+    enableSelfPreservation: true
+    renewalPercentageThreshold: 0.33
