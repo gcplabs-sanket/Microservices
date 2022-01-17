@@ -9,6 +9,7 @@ pipeline {
                 sh 'cd discovery && mvn clean install'
             }
         }
+    stage("Parallel stage"){
         parallel {
                 stage('Docker Build'){
                     steps{
@@ -23,7 +24,8 @@ pipeline {
                         }
                     }
                 }
-        }
+            }               
+    }
         stage("Push Image") {
             steps{
                 sh 'docker push sanket151/discovery:latest'
