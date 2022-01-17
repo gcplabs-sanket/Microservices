@@ -4,14 +4,21 @@ pipeline {
     }
     stages {
         stage('GIT Clone'){
-            git branch: 'master', url: 'https://github.com/gcplabs-sanket/Microservices.git'
+            steps {
+                    echo "Starting pipeline"
+                    git branch: 'master', url: 'https://github.com/gcplabs-sanket/Microservices.git'
+            }
         }
         stage('Application Build'){
-            sh 'cd discovery && mvn clean install'
+            steps{
+                sh 'cd discovery && mvn clean install'
+            }
         }
         stage('Docker Build'){
-            sh 'cd discovery && docker build -t discovery .'
-            sh 'docker tag discovery sanket151/discovery:latest'
+            steps{
+                sh 'cd discovery && docker build -t discovery .'
+                sh 'docker tag discovery sanket151/discovery:latest'
+            } 
         }
 
         withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
@@ -20,11 +27,14 @@ pipeline {
         }
         
         stage("Push Image") {
-            sh 'docker push sanket151/discovery:latest'
+            steps{
+                sh 'docker push sanket151/discovery:latest'
+            }
         }
         stage("Deploy on k8s") {
-            sh 'kubectl apply -f discovery/K8S-deployment.yml'
+            steps{
+                sh 'kubectl apply -f discovery/K8S-deployment.yml'
+            }
         }
     }
-    
 }
