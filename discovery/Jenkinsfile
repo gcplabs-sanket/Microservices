@@ -1,25 +1,29 @@
 pipeline {
-    agent any
-    environment {
-        DOCKERHUB_CREDENTIALS=credentials('DOCKER_HUB_CREDENTIALS')
-    }
+    agent any          
+    def app    
     stages {
         stage('Application Build'){
             steps{
                 sh 'cd discovery && mvn clean install'
             }
-        }
-        stage('docker build and push')
-        {
-            steps{
-                def newApp = docker.build("sanket151/discovery:${env.BUILD_TAG}","-f ./discovery/")
-                newApp.push()
-            }
-        }
+        }    
+        stage('Build image') { 
+          steps{
+            app = docker.build("sanket151/discovery","-f ./discovery/")    
+          }        
+       }    
+       stage('Push image') {
+           steps{
+               docker.withRegistry('https://registry.hub.docker.com', 'git') {            
+                    app.push("${env.BUILD_NUMBER}")            
+                    app.push("latest")        
+              }    
+           }
+       }
     }
     post{
         cleanup{
-            sh 'docker image rm discovery'
+            sh 'docker image rm sanket151/discovery'
         }
     }
 }
