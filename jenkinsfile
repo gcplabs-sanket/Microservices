@@ -21,13 +21,14 @@ pipeline {
                 sh 'docker tag discovery sanket151/discovery:latest'
             } 
         }
-        stage{
-            withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
-                sh 'echo $PASSWORD'
-                sh 'docker login -u sanket151 -p $PASSWORD'
+        stage('Docker Login') {
+            steps{
+                withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
+                    sh 'echo $PASSWORD'
+                    sh 'docker login -u sanket151 -p $PASSWORD'
+                }
             }
         }
-        
         
         stage("Push Image") {
             steps{
