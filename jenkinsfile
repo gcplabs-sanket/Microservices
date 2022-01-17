@@ -4,12 +4,6 @@ pipeline {
         DOCKERHUB_CREDENTIALS=credentials('DOCKER_HUB_CREDENTIALS')
     }
     stages {
-        stage('GIT Clone'){
-            steps {
-                    echo "Starting pipeline"
-                    git branch: 'master', url: 'https://github.com/gcplabs-sanket/Microservices.git'
-            }
-        }
         stage('Application Build'){
             steps{
                 sh 'cd discovery && mvn clean install'
