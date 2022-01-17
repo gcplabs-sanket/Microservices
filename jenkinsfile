@@ -35,5 +35,10 @@ pipeline {
                 sh 'kubectl apply -f discovery/K8S-deployment.yml'
             }
         }
+        post{
+            cleanup{
+                sh 'docker image rm discovery'
+            }
+        }
     }
 }
