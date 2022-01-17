@@ -9,31 +9,11 @@ pipeline {
                 sh 'cd discovery && mvn clean install'
             }
         }
-    stage("Parallel stage"){
-        parallel {
-                stage('Docker Build'){
-                    steps{
-                        sh 'cd discovery && docker build -t discovery .'
-                        sh 'docker tag discovery sanket151/discovery:latest'
-                    } 
-                }
-                stage('Docker Login') {
-                    steps{
-                        withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
-                        sh 'docker login -u sanket151 -p $PASSWORD'
-                        }
-                    }
-                }
-            }               
-    }
-        stage("Push Image") {
+        stage('docker build and push')
+        {
             steps{
-                sh 'docker push sanket151/discovery:latest'
-            }
-        }
-        stage("Deploy on k8s") {
-            steps{
-                sh 'kubectl apply -f discovery/K8S-deployment.yml'
+                def newApp = docker.build("sanket151/discovery:${env.BUILD_TAG}","-f ./discovery/")
+                newApp.push()
             }
         }
     }

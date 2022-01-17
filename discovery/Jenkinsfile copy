@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    environment {
+        DOCKERHUB_CREDENTIALS=credentials('DOCKER_HUB_CREDENTIALS')
+    }
+    stages {
+        stage('Application Build'){
+            steps{
+                sh 'cd discovery && mvn clean install'
+            }
+        }
+    stage("Parallel stage"){
+        parallel {
+                stage('Docker Build'){
+                    steps{
+                        sh 'cd discovery && docker build -t discovery .'
+                        sh 'docker tag discovery sanket151/discovery:latest'
+                    } 
+                }
+                stage('Docker Login') {
+                    steps{
+                        withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'PASSWORD')]) {
+                        sh 'docker login -u sanket151 -p $PASSWORD'
+                        }
+                    }
+                }
+            }               
+    }
+        stage("Push Image") {
+            steps{
+                sh 'docker push sanket151/discovery:latest'
+            }
+        }
+        stage("Deploy on k8s") {
+            steps{
+                sh 'kubectl apply -f discovery/K8S-deployment.yml'
+            }
+        }
+    }
+    post{
+        cleanup{
+            sh 'docker image rm discovery'
+        }
+    }
+}
