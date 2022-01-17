@@ -1,6 +1,6 @@
+def app 
 pipeline {
-    agent any          
-    def app    
+    agent any             
     stages {
         stage('Application Build'){
             steps{
@@ -9,14 +9,18 @@ pipeline {
         }    
         stage('Build image') { 
           steps{
-            app = docker.build("sanket151/discovery","-f ./discovery/")    
+              script{
+                    app = docker.build("sanket151/discovery","-f ./discovery/")    
+              }
           }        
        }    
        stage('Push image') {
            steps{
-               docker.withRegistry('https://registry.hub.docker.com', 'git') {            
+               script{
+                    docker.withRegistry('https://registry.hub.docker.com', 'git') {            
                     app.push("${env.BUILD_NUMBER}")            
-                    app.push("latest")        
+                    app.push("latest")
+               }
               }    
            }
        }
