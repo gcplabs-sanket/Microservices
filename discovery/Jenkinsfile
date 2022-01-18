@@ -1,6 +1,9 @@
 def app 
 pipeline {
-    agent any             
+    agent any 
+    environment {
+        DOCKERHUB_CREDENTIALS=credentials('DOCKER_HUB_CREDENTIALS')
+    }            
     stages {
         stage('Application Build'){
             steps{
@@ -10,20 +13,13 @@ pipeline {
         stage('Build image') { 
           steps{
               script{
-                    app = docker.build("sanket151/discovery","-f ./discovery/")    
+                  docker.withRegistry('https://registry.hub.docker.com', 'DOCKERHUB_CREDENTIALS') {
+                    app = docker.build("sanket151/discovery:latest","-f ./discovery/Dockerfile")
+                    app.push()   
+                  }
               }
           }        
        }    
-       stage('Push image') {
-           steps{
-               script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'git') {            
-                    app.push("${env.BUILD_NUMBER}")            
-                    app.push("latest")
-               }
-              }    
-           }
-       }
     }
     //post{
     //    cleanup{
