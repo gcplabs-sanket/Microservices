@@ -13,7 +13,7 @@ pipeline {
         stage('Build image') { 
           steps{
               script{
-                  docker.withRegistry('https://registry.hub.docker.com', 'DOCKERHUB_CREDENTIALS') {
+                  docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
                     sh 'cd discovery'
                     app = docker.build("sanket151/discovery:latest")
                     app.push()   
