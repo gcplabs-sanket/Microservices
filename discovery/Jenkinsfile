@@ -23,10 +23,7 @@ pipeline {
     }
     post{
         cleanup{
-            script {
-                app.delete()
-            }
-            //sh 'docker image rm -f sanket151/discovery registry.hub.docker.com/sanket151/discovery' 
+            sh 'docker image rm -f sanket151/discovery registry.hub.docker.com/sanket151/discovery' 
         }
     }
 }
