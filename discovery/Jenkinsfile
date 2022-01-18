@@ -25,9 +25,9 @@ pipeline {
            }
        }
     }
-    post{
-        cleanup{
-            sh 'docker image rm sanket151/discovery'
-        }
-    }
+    //post{
+    //    cleanup{
+    //        sh 'docker image rm sanket151/discovery'
+    //    }
+    //}
 }
