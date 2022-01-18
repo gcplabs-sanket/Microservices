@@ -15,7 +15,7 @@ pipeline {
               script{
                   docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_HUB_CREDENTIALS') {
                     sh 'cd discovery'
-                    app = docker.build("sanket151/discovery:latest")
+                    app = docker.build("sanket151/discovery:latest","-f discovery/Dockerfile")
                     app.push()   
                   }
               }
